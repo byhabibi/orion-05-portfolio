@@ -31,8 +31,8 @@ Termokopel saya evaluasi pada mesin yang sedang berjalan, sampai kurva suhu laya
 
 ESP32, PlatformIO, framework Arduino, termokopel, HMI Nextion, pencatatan data lewat USB.
 
-Cara bagian-bagian itu tersambung, dan apa yang terjadi dari biji masuk sampai cooling, ada di [docs/wiring.md](docs/wiring.md). Cara program mengulang keputusan itu ada di [docs/program.md](docs/program.md).
+Sambungan dan jenis sinyalnya ada di [docs/wiring.md](docs/wiring.md). Keadaan sangrai, dari siaga sampai cooling, ada di [docs/program.md](docs/program.md). Kerangka program utamanya ada di [firmware/main.cpp](firmware/main.cpp).
 
 ## Batas repo ini
 
-Ini halaman portfolio. Yang ada gambaran fungsi, bukan sumber produksi. Tidak ada schematic, BOM, harga, nomor pin, atau parameter proses. Halaman ini tidak cukup untuk membangun ulang mesin.
+Ini halaman portfolio. Yang bisa dibaca hanya alur utama dan potongan `main`. Modul sensor, katup, layar, schematic, BOM, harga, nomor pin, dan parameter proses tidak ada. Halaman ini tidak cukup untuk membangun ulang mesin.

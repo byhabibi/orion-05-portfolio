@@ -1,39 +1,43 @@
 # Wiring
 
-Sambungan antar bagian. Cukup untuk mengikuti alur mesin, bukan untuk merakit ulang.
+Sambungan antar bagian. Cukup untuk mengikuti sinyal utama, bukan untuk merakit ulang.
 
 ```text
-termokopel biji ──┐
-termokopel ruang ─┼── ESP32 ── layar HMI
-termokopel motor ─┘     │
-                        ├── katup gas
-knop panel ─────────────┤
-                        ├── drum
-papan sensor ───────────┤
-  tekanan gas           ├── blower udara
-  sensor gas            └── bak cooling
-                        │
-laptop (Artisan) ───────┘
+termokopel biji  ── SPI ──┐
+termokopel ruang ── SPI ──┼── ESP32 ── serial ── layar HMI
+termokopel motor ── SPI ──┘     │
+                                ├── servo ──────── katup gas
+knop dan tombol ── analog/digital┤
+                                ├── perintah kecepatan ── drum
+papan sensor ── serial ─────────┤
+  tekanan gas                   ├── perintah kecepatan ── blower
+  sensor gas                    └── on/off ────────────── bak cooling
+                                │
+laptop (Artisan) ── USB ────────┘
 ```
 
-## Peran tiap bagian
+## Jenis sinyal
 
-ESP32 adalah otak. Tiga termokopel tipe K masuk ke situ: suhu biji, suhu ruang di dalam drum, dan suhu motor. Angka biji dan angka ruang yang tampil di layar berasal dari dua sensor pertama.
+Tiga termokopel tipe K masuk ke antarmuka di papan controller, lalu dibaca ESP32 lewat SPI. Tiga saluran itu terpisah: suhu biji, suhu ruang di dalam drum, dan suhu motor. Yang digambar sebagai kurva hanya dua yang pertama. Suhu motor dipakai untuk menjaga drum.
 
-Knop di panel juga masuk ke ESP32. Putaran knop menjadi perintah untuk katup gas, kecepatan drum, dan blower.
+Knop burner, udara, dan drum adalah tegangan analog. ESP32 mengubahnya menjadi persen. Tombol panel (drum, udara, burner, cooling, pompa, darurat) masuk sebagai sinyal digital.
 
-Tekanan gas dan sensor gas duduk di papan lain. Papan itu mengukur, lalu mengirim hasilnya ke ESP32. ESP32 tidak mengukur dua sensor itu sendiri.
+Perintah burner tidak langsung menyalakan api. Persen knop menjadi posisi servo pada katup gas. Servo bergerak bertahap menuju posisi itu, tidak meloncat.
 
-Layar HMI dua arah. ESP32 mengirim suhu, kurva, dan status. Layar mengirim tombol yang ditekan operator, misalnya mulai mencatat sangrai atau berhenti.
+Drum dan blower menerima perintah kecepatan. Bak cooling dan pompa hanya hidup atau mati.
 
-Laptop hanya menerima suhu lewat USB supaya kurva yang sama bisa disimpan di Artisan. Knop di mesin tetap yang mengatur api, drum, dan udara.
+Tekanan gas dan sensor gas tidak diukur ESP32. Keduanya duduk di papan kedua. Papan itu mengirim satu baris data ke ESP32 lewat serial. Selama baris itu tidak datang, controller menganggap tekanan dan gas tidak ada, bukan mengarang angka.
 
-Listrik pemanas dan rangkaian controller dipisah. Tegangan mesin tidak masuk ke kaki controller.
+Layar HMI juga serial, dua arah. ESP32 mengirim suhu, kurva, timer, dan status. Layar mengirim tombol: mulai catat, berhenti, reset, ganti satuan, dan masuk halaman pemanasan.
+
+Laptop tersambung ke USB controller. Artisan hanya meminta suhu. Knop di panel tetap yang menggerakkan katup, drum, dan udara.
+
+Listrik katup, drum, dan blower tidak masuk ke kaki ESP32. Controller hanya mengirim sinyal.
 
 ## Saat satu sangrai berjalan
 
-1. Biji ada di dalam drum. Operator menyalakan drum dan blower, lalu membuka gas lewat knop.
-2. Termokopel melaporkan panas biji dan panas ruang. ESP32 menampilkan keduanya sebagai kurva.
-3. Blower menarik udara, sekaligus membawa kulit kering yang terlepas dari biji keluar dari drum.
-4. Kalau sensor gas atau suhu motor melaporkan kondisi yang tidak aman, ESP32 menutup jalur gas dan, bila perlu, menghentikan drum.
-5. Di akhir, operator menutup gas. Biji keluar dari drum ke bak cooling. Kurva di layar tetap ada, dan salinannya bisa tersimpan di laptop.
+1. Biji ada di dalam drum. Operator menyalakan drum dan blower, lalu membuka gas lewat knop. Servo mengikuti knop dan membuka katup.
+2. Tiga termokopel dibaca terus. Suhu biji dan suhu ruang menjadi kurva. Suhu motor diawasi di belakang.
+3. Blower menarik udara dan membawa kulit kering keluar dari drum. Persen udara yang tampil di layar mengikuti knop.
+4. Papan kedua melaporkan tekanan dan kondisi gas. Kalau laporan itu, atau suhu motor, atau tombol darurat, menyatakan tidak aman, ESP32 menutup katup. Drum bisa ikut berhenti.
+5. Di akhir, operator menutup knop gas. Katup ikut tertutup. Biji keluar dari drum ke bak cooling, dan cooling dinyalakan dari panel. Kurva di layar tetap ada sampai di-reset. Salinannya bisa tersimpan di laptop.
