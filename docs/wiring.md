@@ -34,7 +34,7 @@ Laptop tersambung ke USB controller. Artisan hanya meminta suhu. Knop di panel t
 
 Listrik katup, drum, dan blower tidak masuk ke kaki ESP32. Controller hanya mengirim sinyal.
 
-## Saat satu sangrai berjalan
+## Saat satu roasting berjalan
 
 1. Biji ada di dalam drum. Operator menyalakan drum dan blower, lalu membuka gas lewat knop. Servo mengikuti knop dan membuka katup.
 2. Tiga termokopel dibaca terus. Suhu biji dan suhu ruang menjadi kurva. Suhu motor diawasi di belakang.

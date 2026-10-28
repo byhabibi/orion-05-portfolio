@@ -1,12 +1,12 @@
 # Cara kerja
 
-Controller mengulang satu putaran. Di dalam putaran itu ada beberapa keadaan sangrai. Angka kalibrasi tidak ditulis di sini. Potongan program utamanya ada di [firmware/main.cpp](../firmware/main.cpp). Isi modul sensor, katup, dan layar tidak disertakan.
+Controller mengulang satu putaran. Di dalam putaran itu ada beberapa keadaan roasting. Angka kalibrasi tidak ditulis di sini. Potongan program utamanya ada di [firmware/main.cpp](../firmware/main.cpp). Isi modul sensor, katup, dan layar tidak disertakan.
 
 ## Keadaan yang dilihat operator
 
 **Siaga.** Suhu tetap tampil. Kurva belum berjalan. Knop hanya sampai ke mesin bila pemeriksaan keselamatan mengizinkan.
 
-**Pemanasan.** Layar pindah ke halaman pemanasan dan menghitung waktu. Suhu ruang dipantau. Setelah ruang cukup panas dan bertahan sebentar, layar kembali ke halaman sangrai. Pemanasan tidak sama dengan mulai mencatat kurva.
+**Pemanasan.** Layar pindah ke halaman pemanasan dan menghitung waktu. Suhu ruang dipantau. Setelah ruang cukup panas dan bertahan sebentar, layar kembali ke halaman roasting. Pemanasan tidak sama dengan mulai mencatat kurva.
 
 **Mencatat.** Tombol mulai di layar mengosongkan kurva, menjalankan timer, dan mulai menambah titik. Sekali dalam satu detik program menyimpan suhu biji dan suhu ruang, menghitung laju naik suhu, lalu menggambar satu titik. Gas, drum, dan udara tetap mengikuti knop.
 
